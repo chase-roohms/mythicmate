@@ -1,6 +1,10 @@
 # Use Eclipse Temurin JDK 21 (recommended for production)
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
+# Accept build arguments for user/group IDs
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Set working directory
 WORKDIR /app
 
@@ -19,6 +23,10 @@ RUN mvn clean package -DskipTests
 # Runtime stage - use smaller JRE image
 FROM eclipse-temurin:21-jre-alpine
 
+# Accept build arguments for user/group IDs
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
 # Set working directory
 WORKDIR /app
 
@@ -28,9 +36,9 @@ RUN mkdir -p /app/database
 # Copy the built JAR from builder stage
 COPY --from=builder /app/target/MythicMate-1.0-SNAPSHOT.jar /app/mythicmate.jar
 
-# Create a non-root user for security
-RUN addgroup -g 1000 mythicmate && \
-    adduser -D -u 1000 -G mythicmate mythicmate && \
+# Create a non-root user for security using the provided IDs
+RUN addgroup -g ${GROUP_ID} mythicmate && \
+    adduser -D -u ${USER_ID} -G mythicmate mythicmate && \
     chown -R mythicmate:mythicmate /app && \
     chmod -R 755 /app/database
 
