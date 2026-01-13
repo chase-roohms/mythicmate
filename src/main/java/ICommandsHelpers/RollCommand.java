@@ -1,14 +1,13 @@
 package ICommandsHelpers;
 
-import Functions.Dice;
-
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+
+import Functions.Dice;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class RollCommand {
     /*Fields                                                                                    */
@@ -32,7 +31,6 @@ public class RollCommand {
         int sum = 0;                                        //Track rolling sum
         int rerolls = 0;                                    //Track rerolls (for gwf and empower)
         double average = 0;                                 //Track average
-        int totalNumDie = 0;                                //Track number of dice rolled
         StringBuilder diceRolled = new StringBuilder();     //To output each dice's roll
 
         while (!dice.isEmpty()) {                          //While there is input to process
@@ -51,7 +49,6 @@ public class RollCommand {
                 }  //##d## numDice is before d
                 int faces = Integer.parseInt(dice.get(0).substring(d + 1));    //faces is after d
                 average += numDie*(((double) faces /2) + 0.5);
-                totalNumDie += numDie;
 
                 //Format string with the dice being roled in bold letters
                 diceRolled.append("**").append(numDie).append("d").append(faces).append("**").append(": (");
@@ -61,49 +58,54 @@ public class RollCommand {
                 for (int i = 0; i < numDie; i++) {      //Loop numDie times
                     int roll = 0;                       //To store roll value
 
-                    if (rollType == RollType.REG) {    //Regular roll
-                        roll = die.roll();              //Roll dice
-                        diceRolled.append("**").append(roll).append("**");        //Add it to the dice rolled string
-                    } else if (rollType == RollType.ADV) {             //Roll with advantage
-                        int roll1 = die.roll();                         //Roll twice
-                        int roll2 = die.roll();
-                        int badRoll = Math.min(roll1, roll2);           //Bad roll is lower
-                        roll = Math.max(roll1, roll2);                  //Save higher roll
-
-                        //Add both to string, crossing out lower roll
-                        diceRolled.append("(*").append(badRoll).append("* -> **").append(roll).append("**)");
-                    } else if (rollType == RollType.DISADV) {          //Roll with disadvantage
-                        int roll1 = die.roll();                         //Roll twice
-                        int roll2 = die.roll();
-                        int goodRoll = Math.max(roll1, roll2);          //Good roll is higher
-                        roll = Math.min(roll1, roll2);                  //Save lower roll
-
-                        //Add both to string, crossing out higher roll
-                        diceRolled.append("(*").append(goodRoll).append("* -> **").append(roll).append("**)");
-                    } else if (rollType == RollType.GWF) {     //Roll great weapon fighting
-                        int roll1 = die.roll();                 //Roll dice
-                        if (roll1 <= 2) {                       //If the roll is less than or equal to 2
-                            roll = die.roll();                  //Reroll, saving new roll
-
-                            //Add both to string, crossing out rerolled roll
-                            diceRolled.append("(*").append(roll1).append("* -> **").append(roll).append("**)");
-                            rerolls++;                      //Add a reroll
-                        } else {                            //Roll was higher than 2
-                            roll = roll1;                   //Save the roll
-                            diceRolled.append("**").append(roll).append("**");        //Add to string
+                    switch (rollType) {
+                        case REG -> {    //Regular roll
+                            roll = die.roll();              //Roll dice
+                            diceRolled.append("**").append(roll).append("**");        //Add it to the dice rolled string
                         }
+                        case ADV -> {             //Roll with advantage
+                            int roll1Adv = die.roll();                         //Roll twice
+                            int roll2Adv = die.roll();
+                            int badRoll = Math.min(roll1Adv, roll2Adv);           //Bad roll is lower
+                            roll = Math.max(roll1Adv, roll2Adv);                  //Save higher roll
 
-                    } else if (rollType == RollType.EMPOWER) {  //Roll and empower
-                        int roll1 = die.roll();                  //Roll dice
-                        if (roll1 <= empowerParam) {             //If the roll is less than or equal to users num
-                            roll = die.roll();                   //Reroll, saving new roll
+                            //Add both to string, crossing out lower roll
+                            diceRolled.append("(*").append(badRoll).append("* -> **").append(roll).append("**)");
+                        }
+                        case DISADV -> {          //Roll with disadvantage
+                            int roll1Disadv = die.roll();                         //Roll twice
+                            int roll2Disadv = die.roll();
+                            int goodRoll = Math.max(roll1Disadv, roll2Disadv);          //Good roll is higher
+                            roll = Math.min(roll1Disadv, roll2Disadv);                  //Save lower roll
 
-                            //Add both to string, crossing out rerolled roll
-                            diceRolled.append("(*").append(roll1).append("* -> **").append(roll).append("**)");
-                            rerolls++;                      //Add a reroll
-                        } else {                            //Roll was higher than users num
-                            roll = roll1;                   //Save the roll
-                            diceRolled.append("**").append(roll).append("**");        //Add to string
+                            //Add both to string, crossing out higher roll
+                            diceRolled.append("(*").append(goodRoll).append("* -> **").append(roll).append("**)");
+                        }
+                        case GWF -> {     //Roll great weapon fighting
+                            int roll1Gwf = die.roll();                 //Roll dice
+                            if (roll1Gwf <= 2) {                       //If the roll is less than or equal to 2
+                                roll = die.roll();                  //Reroll, saving new roll
+
+                                //Add both to string, crossing out rerolled roll
+                                diceRolled.append("(*").append(roll1Gwf).append("* -> **").append(roll).append("**)");
+                                rerolls++;                      //Add a reroll
+                            } else {                            //Roll was higher than 2
+                                roll = roll1Gwf;                   //Save the roll
+                                diceRolled.append("**").append(roll).append("**");        //Add to string
+                            }
+                        }
+                        case EMPOWER -> {  //Roll and empower
+                            int roll1Empower = die.roll();                  //Roll dice
+                            if (roll1Empower <= empowerParam) {             //If the roll is less than or equal to users num
+                                roll = die.roll();                   //Reroll, saving new roll
+
+                                //Add both to string, crossing out rerolled roll
+                                diceRolled.append("(*").append(roll1Empower).append("* -> **").append(roll).append("**)");
+                                rerolls++;                      //Add a reroll
+                            } else {                            //Roll was higher than users num
+                                roll = roll1Empower;                   //Save the roll
+                                diceRolled.append("**").append(roll).append("**");        //Add to string
+                            }
                         }
                     }
                     sum += roll;                    //Add roll to the total
@@ -145,22 +147,18 @@ public class RollCommand {
         diceEmbed.setThumbnail("https://i.imgur.com/AaMCQiQ.png");
 
         String rollTitle = "";
-        if (rollType.equals(RollType.REG)) {
-            rollTitle +="Rolling Your Dice";
-
-        } else if(rollType.equals(RollType.ADV)){
-            rollTitle += "Rolling with Advantage";
-        } else if(rollType.equals(RollType.DISADV)){
-            rollTitle += "Rolling with Disdvantage";
-        }
-
-        else if (rollType.equals(RollType.GWF) || rollType.equals(RollType.EMPOWER)) {
-            if (rollType.equals(RollType.GWF)) {
+        switch (rollType) {
+            case REG -> rollTitle += "Rolling Your Dice";
+            case ADV -> rollTitle += "Rolling with Advantage";
+            case DISADV -> rollTitle += "Rolling with Disdvantage";
+            case GWF -> {
                 rollTitle += "Great Weapon Fighting - Rerolling 2 or Lower";
-            } else {
-                rollTitle += "Rolling and Empowering - Rerolling " + empowerParam + " or Lower";
+                diceEmbed.addField("**Rerolls**", "➥" + rerolls, true);
             }
-            diceEmbed.addField("**Rerolls**", "➥" + rerolls, true);
+            case EMPOWER -> {
+                rollTitle += "Rolling and Empowering - Rerolling " + empowerParam + " or Lower";
+                diceEmbed.addField("**Rerolls**", "➥" + rerolls, true);
+            }
         }
 
         diceEmbed.setAuthor(rollTitle, "https://chaseroohms.github.io/", "https://i.imgur.com/CnYaMkM.png");
