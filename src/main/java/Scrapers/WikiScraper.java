@@ -1,16 +1,5 @@
 package Scrapers;
 
-import Bot.DiscordBot;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import org.apache.commons.lang3.time.StopWatch;
-
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,16 +8,26 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.time.StopWatch;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import Bot.DiscordBot;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+
 public class WikiScraper {
     //Known class names
-    private final static Set<String> classes = new HashSet<>(Arrays.asList("/artificer", "/barbarian", "/bard",
+    private final static Set<String> CLASSES = new HashSet<>(Arrays.asList("/artificer", "/barbarian", "/bard",
             "/blood-hunter", "/cleric", "/druid", "/fighter", "/monk", "/paladin", "/ranger", "/rogue", "/sorcerer",
             "/warlock", "/wizard"));
-    private final static String spellListPath = DiscordBot.ROOTDIR + "/database/SpellList.txt";
-    private final static String featListPath = DiscordBot.ROOTDIR + "/database/FeatList.txt";
-    private final static String lineageListPath = DiscordBot.ROOTDIR + "/database/LineageList.txt";
-    private final static String classListPath = DiscordBot.ROOTDIR + "/database/ClassList.txt";
-    private final static String subclassListPath = DiscordBot.ROOTDIR + "/database/SubclassList.txt";
+    private final static String SPELL_LIST_PATH = DiscordBot.ROOTDIR + "/database/SpellList.txt";
+    private final static String FEAT_LIST_PATH = DiscordBot.ROOTDIR + "/database/FeatList.txt";
+    private final static String LINEAGE_LIST_PATH = DiscordBot.ROOTDIR + "/database/LineageList.txt";
+    private final static String CLASS_LIST_PATH = DiscordBot.ROOTDIR + "/database/ClassList.txt";
+    private final static String SUBCLASS_LIST_PATH = DiscordBot.ROOTDIR + "/database/SubclassList.txt";
 
     public static void scrape(SlashCommandInteractionEvent event) throws IOException {
         int count = 0;
@@ -42,28 +41,23 @@ public class WikiScraper {
         FileWriter myWriter;
 
         if(databaseType.equalsIgnoreCase("spell")){
-            new File(spellListPath);
             linkURL += "/spells";
-            currentPath = spellListPath;
+            currentPath = SPELL_LIST_PATH;
         }else if(databaseType.equalsIgnoreCase("lineage")) {
-            new File(lineageListPath);
             linkURL += "/lineage:";
-            currentPath = lineageListPath;
+            currentPath = LINEAGE_LIST_PATH;
         }else if(databaseType.equalsIgnoreCase("feat")) {
-            new File(featListPath);
-            currentPath = featListPath;
+            currentPath = FEAT_LIST_PATH;
         }else if(databaseType.equalsIgnoreCase("class")) {
-            new File(classListPath);
-            currentPath = classListPath;
+            currentPath = CLASS_LIST_PATH;
         }else if(databaseType.equalsIgnoreCase("subclass")) {
-            new File(subclassListPath);
-            currentPath = subclassListPath;
+            currentPath = SUBCLASS_LIST_PATH;
         }
 
         try{
             myWriter = new FileWriter(currentPath);
         }catch (IOException e){
-            event.reply(e.getMessage() + " - Cancelling operation.").queue();
+            event.getHook().sendMessage(e.getMessage() + " - Cancelling operation.").queue();
             return;
         }
 
@@ -108,7 +102,7 @@ public class WikiScraper {
                     }
                 }
             }else if(databaseType.equalsIgnoreCase("class")) {
-                if(classes.contains(href)) {
+                if(CLASSES.contains(href)) {
                     if(!newestVersion.contains(check)) {
                         newestVersion.add(check);
                         scrapeURL = baseURL + href;
@@ -117,7 +111,7 @@ public class WikiScraper {
                 }
             }else if(databaseType.equalsIgnoreCase("subclass")) {
                 if (href.contains(":")) {
-                    if (classes.contains(href.substring(0, href.indexOf(":")))) {
+                    if (CLASSES.contains(href.substring(0, href.indexOf(":")))) {
                         if(!newestVersion.contains(check)) {
                             newestVersion.add(check);
                             scrapeURL = baseURL + href;
