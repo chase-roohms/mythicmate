@@ -1,5 +1,6 @@
 package Scrapers;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -55,6 +56,13 @@ public class WikiScraper {
         }
 
         try{
+            // Create parent directories if they don't exist
+            File file = new File(currentPath);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+            
             myWriter = new FileWriter(currentPath);
         }catch (IOException e){
             event.getHook().sendMessage(e.getMessage() + " - Cancelling operation.").queue();

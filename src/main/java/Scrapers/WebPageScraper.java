@@ -1,5 +1,6 @@
 package Scrapers;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -18,6 +19,13 @@ public class WebPageScraper {
     }
 
     public static void scrape(String path, String docName, Document doc) {
+        // Create parent directories if they don't exist
+        File file = new File(path);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        
         try (FileWriter myWriter = new FileWriter(path)) {
             myWriter.write("# " + docName + "\n");
             Element page = doc.getElementById("page-content");
