@@ -1,6 +1,6 @@
 package Bot;
 
-import AuthenticateDO_NOT_SHARE.Authenticate;
+import Authenticate.Authenticate;
 
 import Events.AutoCompleteManager;
 import Events.CommandManager;

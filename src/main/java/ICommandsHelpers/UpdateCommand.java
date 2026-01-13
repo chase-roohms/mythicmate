@@ -1,6 +1,6 @@
 package ICommandsHelpers;
 
-import AuthenticateDO_NOT_SHARE.Authenticate;
+import Authenticate.Authenticate;
 import Scrapers.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
