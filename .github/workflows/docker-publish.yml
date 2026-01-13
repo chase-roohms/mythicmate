@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'entrypoint.sh'
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/mythicmate
