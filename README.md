@@ -1,38 +1,208 @@
 # MythicMate
-A D&amp;D Discord bot that facilitates dice rolling and rules referencing. Implements a web scraper to update local database files on the machine I run it on.
 
-## 🚀 Quick Links
+A powerful D&D Discord bot designed for seamless remote gameplay. MythicMate provides intuitive dice rolling, comprehensive rules referencing, and AI-powered assistance—all optimized for speed and ease of use.
 
-- **[Docker Setup](DOCKER.md)** - Run MythicMate in Docker
-- **[CI/CD Setup](QUICKSTART-CICD.md)** - Quick start for automated builds
-- **[CI/CD Documentation](CICD.md)** - Full CI/CD guide
+## Features
 
-## Overview
-My friends and I play D&amp;D and due to distance we do it remotely via discord. There are some really good discord bots out there but they all felt like they were lacking something. The dice input was really specific in its syntax, the information was locked behind paywalls and account linking, we wanted something quick, easy, and low maintenance. Enter MythicMate.
+### Flexible Dice Rolling
+- **Simple Syntax**: Accepts any dice notation with automatic parsing (e.g., `2d20 + 1d6 + 5`)
+- **Forgiving Input**: Handles spaces and typos gracefully, rolling recognized dice while alerting you to errors
+- **Detailed Results**: Shows individual die results for dramatic effect
+- **Multiple Roll Types**:
+  - `/roll` - Standard dice rolling
+  - `/rolladv` - Roll with advantage
+  - `/rolldisadv` - Roll with disadvantage
+  - `/rollgwf` - Great Weapon Fighting (reroll 1s and 2s)
+  - `/rollempower` - Sorcerer Empowered Spell (reroll dice below a threshold)
 
-## Dice Rolling
-When you are in the middle of a game, you don't want to have to remember the complex syntax of commands, or worry about a misspelling ruining your flow, you want fast and effective. For the dice rolling commands, MythicMate accepts any length of dice, and displays what each one rolled for dramatic effect. It sorts through your input, splitting it by plus signs, and removing any spaces that might cause issue. If the bot for some reason does not recognize a symbol, it will still roll the dice it does recognize and simply alert you of the error! No more pausing to ask "How do I roll again?"
+### Rules & Reference Database
+- **Fast Lookups**: Lightning-fast autocomplete suggestions for spells, conditions, feats, and more
+- **Offline Access**: All data stored locally for instant responses
+- **Commands**:
+  - `/spell` - Look up spell details
+  - `/conditions` - View condition descriptions
+  - `/feat` - Search feats
+  - `/lineage` - Browse lineage options
+  - `/class` - View class information
+  - `/subclass` - Look up subclass details
+  - `/damages` - Reference damage types
+  - `/cover` - Cover rules
 
-Currently MythicMate supports rolling flat, rolling with advantadge and disavantadge, rolling for great weapon fighting (rerolling 1's and 2's), and sorcerer empowering (rerolling any dice below a specified number).
+### AI Integration
+- **ChatGPT Powered**: `/ask` command for complex rule questions
+- **Contextual Answers**: Precise, pre-formatted prompts ensure relevant D&D responses
+- **Multithreaded**: AI requests run on separate threads to keep the bot responsive
 
-## Web Scraping
-A lot of D&amp;D content is locked behind a paywall, but there are user ran sites like the DND5eWikiDot, that you can gather the important things from like rules, and spell details. When I run the password locked "/update" command, it searches through the links on the homepage of this wiki, and pulls information from them, saving them as formatted text files on my computer. These files are formatted in Discord's Markdown format. When a user wants to look up something, it references the available text files, and offers autocomplete suggestions. The files are then simply passed into a discord message with no further formatting needed, because it is all taken care of when scraping the data. This results in lightning fast searches.
+### Web Scraping & Updates
+- **Auto-Update**: `/update` command scrapes D&D wikis for the latest content
+- **Password Protected**: Secured to prevent unauthorized database updates
+- **Pre-Formatted**: Scraped data stored in Discord Markdown format for instant display
 
-## AI Integration
-While a lot of information about D&D is locked behind a paywall, even more of it is scattered across random iterations of rule books, and source material. Utilizing ChatGPT's interface, and precise preformatted instruction, I have created the "/ask" command. The user simply types "/ask" and then their question, and my bot accesses the API and runs a formatted request. The answer is then quickly returned in a message for them.
+## Quick Start with Docker Compose
 
-## Multithreaded Implementation
-A Discord bot with AI integration is great until you realize the processing delays involved with AI, specifically ChatGPT's API. When one user had a hanging request for an AI generated rules check, no other user was capable of running commands. To solve this I implemented multithreading, allowing each command to create and run on a new thread as soon as it is called, keeping the main bot free to process incoming commands.
+### Prerequisites
+- Docker and Docker Compose installed
+- Discord Bot Token ([Create one here](https://discord.com/developers/applications))
+- OpenAI API Key (for `/ask` command)
+- A password for the `/update` command
+
+### Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/chase-roohms/mythicmate.git
+   cd mythicmate
+   ```
+
+2. **Create a `.env` file** in the project root:
+   ```bash
+   MYTHICMATE_TOKEN=your_discord_bot_token_here
+   MYTHICMATE_PASSWORD=your_update_password_here
+   MYTHICMATE_GPT_KEY=your_openai_api_key_here
+   ```
+
+3. **Start the bot**:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **View logs**:
+   ```bash
+   docker-compose logs -f
+   ```
+
+5. **Stop the bot**:
+   ```bash
+   docker-compose down
+   ```
+
+### Docker Compose Configuration
+
+The [docker-compose.yml](docker-compose.yml) file is pre-configured with:
+- **Automatic Restarts**: Bot restarts if it crashes
+- **Persistent Database**: `./database` directory mounted for data persistence
+- **Environment Variables**: Loaded from `.env` file
+- **Security**: Runs as non-root user
+
+### Building from Source
+
+If you want to build the Docker image locally instead of using the pre-built image:
+
+1. **Modify docker-compose.yml**:
+   ```yaml
+   services:
+     mythicmate:
+       build: .  # Instead of using image: neonvariant/mythicmate:main
+       container_name: mythicmate-bot
+       # ... rest of config
+   ```
+
+2. **Build and run**:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+## Local Development Setup
+
+### Prerequisites
+- Java 21 (Eclipse Temurin recommended)
+- Maven 3.8+
+
+### Build & Run
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/chase-roohms/mythicmate.git
+   cd mythicmate
+   ```
+
+2. **Set environment variables**:
+   ```bash
+   export MYTHICMATE_TOKEN=your_discord_bot_token
+   export MYTHICMATE_PASSWORD=your_update_password
+   export MYTHICMATE_GPT_KEY=your_openai_api_key
+   ```
+
+3. **Build the project**:
+   ```bash
+   mvn clean package
+   ```
+
+4. **Run the bot**:
+   ```bash
+   java -jar target/MythicMate-1.0-SNAPSHOT.jar
+   ```
 
 ## Project Structure
-The project is managed by Maven, each of the included directories are their own packages - the main program is located in the Bot package, DiscordBot.java. The code is written entirely in Java, and the work was 100% done by me.
 
-Included dependencies:
-- JSoup: an open source Java HTML parsing library
-- JDA: Java Discord API, a clean and full wrapping of the Discord REST API
-- Apache Commons Lang: This is actually only used for their stop-watch, to ensure the webscraping isn't happening too quickly.
+```
+mythicmate/
+├── src/main/java/
+│   ├── Bot/              # Main Discord bot entry point
+│   ├── Events/           # Command manager and autocomplete
+│   ├── ICommands/        # Slash command implementations
+│   │   └── Roll/         # Dice rolling commands
+│   ├── Functions/        # Utility functions
+│   ├── Database/         # Database management
+│   ├── Scrapers/         # Web scraping utilities
+│   ├── ICommandsHelpers/ # Command helper classes
+│   └── Authenticate/     # Environment variable handling
+├── database/             # Persistent data (created at runtime)
+├── Dockerfile            # Multi-stage Docker build
+├── docker-compose.yml    # Docker Compose configuration
+├── entrypoint.sh         # Container entrypoint script
+└── pom.xml               # Maven configuration
+```
 
-## Future Plans
-I would like for MythicMate to feel like an actual D&amp;D companion, someone who is a part of your server, helping you play the game that you love to play! I am researching conversational AI, and hope to soon be able to add light banter to rolling commands, and present information in a more conversational format to the users.
+## Dependencies
 
+- **[JDA 5.0.0](https://github.com/DV8FromTheWorld/JDA)** - Java Discord API
+- **[JSoup 1.16.2](https://jsoup.org/)** - HTML parsing for web scraping
+- **[Apache Commons Lang 3.18.0](https://commons.apache.org/proper/commons-lang/)** - Utility functions
+- **[dotenv-java 3.0.0](https://github.com/cdimascio/dotenv-java)** - Environment variable management
+- **[SLF4J 2.0.9](https://www.slf4j.org/)** - Logging framework
+
+## Security
+
+- Bot runs as non-root user in Docker container
+- Environment variables used for sensitive data (tokens, keys)
+- `/update` command password-protected
+- No exposed ports (Discord bot uses WebSocket)
+
+## Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `/roll [dice]` | Roll dice with standard notation |
+| `/rolladv [dice]` | Roll with advantage |
+| `/rolldisadv [dice]` | Roll with disadvantage |
+| `/rollgwf [dice]` | Roll with Great Weapon Fighting |
+| `/rollempower [dice] [threshold]` | Roll with Empowered Spell |
+| `/spell [name]` | Look up spell details |
+| `/conditions [name]` | View condition information |
+| `/feat [name]` | Search for feats |
+| `/lineage [name]` | Browse lineage options |
+| `/class [name]` | View class information |
+| `/subclass [name]` | Look up subclass details |
+| `/damages` | Reference damage types |
+| `/cover` | View cover rules |
+| `/ask [question]` | Ask ChatGPT a D&D question |
+| `/update [password]` | Update database from web sources |
+| `/commandlist` | List all available commands |
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms in the [LICENSE](LICENSE) file.
+
+## Why MythicMate?
+
+Remote D&D sessions deserve a bot that just *works*. No complex syntax, no paywalls, no account linking—just fast, intuitive commands that keep your game flowing. Whether you're rolling for initiative or looking up a spell mid-combat, MythicMate has your back.
+
+---
+
+Built with ☕ and ⚔️ by [chase-roohms](https://github.com/chase-roohms)
 
