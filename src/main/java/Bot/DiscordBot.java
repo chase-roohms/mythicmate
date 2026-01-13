@@ -1,11 +1,24 @@
 package Bot;
 
 import Authenticate.Authenticate;
-
 import Events.AutoCompleteManager;
 import Events.CommandManager;
-import ICommands.*;
-import ICommands.Roll.*;
+import ICommands.Ask;
+import ICommands.CommandList;
+import ICommands.Conditions;
+import ICommands.Cover;
+import ICommands.Damages;
+import ICommands.Feat;
+import ICommands.Lineage;
+import ICommands.PlayerClass;
+import ICommands.PlayerSubclass;
+import ICommands.Roll.Roll;
+import ICommands.Roll.RollAdv;
+import ICommands.Roll.RollDisadv;
+import ICommands.Roll.RollEmpower;
+import ICommands.Roll.RollGWF;
+import ICommands.Spell;
+import ICommands.Update;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,14 +31,7 @@ public class DiscordBot {
     /*Main                                                                                      */
     /*==========================================================================================*/
     public static void main(String[] args){
-        if(args.length == 0){
-            System.out.println("Expects one argument");
-            System.out.println("    String: Path to folder (eg /directory/directory/MythicMate)");
-            return;
-        }
-        ROOTDIR = args[0];
-
-        System.out.println(args[0]);
+        ROOTDIR = "/Users/neonvariant/Developer/VSCode/MythicMate";
 
         Authenticate auth = new Authenticate();                 //Authenticator Object
         JDA bot = JDABuilder.createDefault(auth.getToken())     //Build bot (token hidden for safety)
@@ -58,7 +64,7 @@ public class DiscordBot {
             //Try to open database lists and add them as autocomplete options
             autoCompleteManager = new AutoCompleteManager();
             bot.addEventListener(commandManager, autoCompleteManager);
-        }catch (Exception e) {
+        } catch (java.io.FileNotFoundException e) {
             //If it fails, still intialize bot without autocomplete
             System.out.println(e.getMessage());
             bot.addEventListener(commandManager);
