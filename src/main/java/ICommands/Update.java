@@ -1,13 +1,14 @@
 package ICommands;
 
-import ICommandsHelpers.UpdateCommand;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import Events.ICommand;
+import ICommandsHelpers.UpdateCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-
-import java.io.IOException;
-import java.util.*;
 
 public class Update implements ICommand {
     private final String name = "update";
@@ -45,7 +46,7 @@ public class Update implements ICommand {
         try{
             UpdateCommand.update(event);
         }catch(IOException e){
-            event.reply(e.getMessage()).queue();
+            event.getHook().sendMessage(e.getMessage()).queue();
         }
         return null;
     }
