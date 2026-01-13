@@ -31,7 +31,11 @@ public class DiscordBot {
     /*Main                                                                                      */
     /*==========================================================================================*/
     public static void main(String[] args){
-        ROOTDIR = "/Users/neonvariant/Developer/VSCode/MythicMate";
+        // Set ROOTDIR - use environment variable if available, otherwise use current directory
+        ROOTDIR = System.getenv("MYTHICMATE_ROOTDIR");
+        if (ROOTDIR == null || ROOTDIR.isEmpty()) {
+            ROOTDIR = System.getProperty("user.dir");
+        }
 
         Authenticate auth = new Authenticate();                 //Authenticator Object
         JDA bot = JDABuilder.createDefault(auth.getToken())     //Build bot (token hidden for safety)

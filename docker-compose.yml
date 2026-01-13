@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mythicmate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mythicmate-bot
+    restart: unless-stopped
+    
+    # Environment variables for the Authenticate class
+    environment:
+      - MYTHICMATE_TOKEN=${MYTHICMATE_TOKEN}
+      - MYTHICMATE_PASSWORD=${MYTHICMATE_PASSWORD}
+      - MYTHICMATE_GPT_KEY=${MYTHICMATE_GPT_KEY}
+    
+    # Mount database directory as a volume for persistence
+    volumes:
+      - ./database:/app/database
+
+# Optional: Create a named volume for database if you prefer
+# volumes:
+#   database:

@@ -1,0 +1,38 @@
+# Git files
+.git
+.gitignore
+
+# IDE files
+.idea
+.vscode
+*.iml
+
+# Build artifacts
+target/
+*.jar
+*.war
+*.class
+
+# Environment files (security - don't copy into image)
+.env
+.env.local
+.env.*.local
+
+# Documentation
+README.md
+LICENSE
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+*.log
+
+# Database (will be mounted as volume)
+database/
+
+# OS files
+.DS_Store
+Thumbs.db

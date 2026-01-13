@@ -1,6 +1,12 @@
 # MythicMate
 A D&amp;D Discord bot that facilitates dice rolling and rules referencing. Implements a web scraper to update local database files on the machine I run it on.
 
+## 🚀 Quick Links
+
+- **[Docker Setup](DOCKER.md)** - Run MythicMate in Docker
+- **[CI/CD Setup](QUICKSTART-CICD.md)** - Quick start for automated builds
+- **[CI/CD Documentation](CICD.md)** - Full CI/CD guide
+
 ## Overview
 My friends and I play D&amp;D and due to distance we do it remotely via discord. There are some really good discord bots out there but they all felt like they were lacking something. The dice input was really specific in its syntax, the information was locked behind paywalls and account linking, we wanted something quick, easy, and low maintenance. Enter MythicMate.
 
