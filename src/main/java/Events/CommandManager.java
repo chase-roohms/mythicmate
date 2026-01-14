@@ -43,8 +43,9 @@ public class CommandManager extends ListenerAdapter {
         String commandName = event.getName();
         String user = event.getUser().getName();
         String userId = event.getUser().getId();
-        String guild = event.getGuild() != null ? event.getGuild().getName() : "DM";
-        String guildId = event.getGuild() != null ? event.getGuild().getId() : "N/A";
+        Guild guildObj = event.getGuild();
+        String guild = guildObj != null ? guildObj.getName() : "DM";
+        String guildId = guildObj != null ? guildObj.getId() : "N/A";
         
         // Collect and sanitize options (mask passwords)
         String options = event.getOptions().stream()
