@@ -1,6 +1,6 @@
 package Functions;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Dice {
     private final int sides;
@@ -11,8 +11,8 @@ public class Dice {
     }
 
     //Return a random number from 1 to # of sides
+    //Uses ThreadLocalRandom for thread-safe, high-performance randomness in concurrent bot commands
     public int roll() {
-        Random random = new Random();
-        return random.nextInt(sides) + 1;
+        return ThreadLocalRandom.current().nextInt(sides) + 1;
     }
 }
